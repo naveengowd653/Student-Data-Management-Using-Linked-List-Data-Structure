@@ -1,521 +1,520 @@
-  1 #include"header.h"
-  2 int main()
-  3 {
-  4         ST *headptr=0;
-  5         char  op;
-  6         while(1)
-  7         {
-  8                 printf("enter your choice\n");
-  9                 printf("a/A add new \n d/D delete a record \n s/S show the list \n m/M  modify a record \n v/V save record \n t/T sort the list \n l/L delete all \n r/R reverse the list \n e/E exit \n");
- 10                 scanf(" %c",&op);
- 11                 switch(op)
- 12                 {
- 13                         case 'a':
- 14                         case 'A':add_record(&headptr); break;
- 15                         case 'd':
- 16                         case 'D':delete_record(&headptr); break;
- 17                         case 's':
- 18                         case 'S':show_list(headptr);break;
- 19                         case 'V':
- 20                         case 'v':save_record(headptr);break;
- 21                         case 'm':
- 22                         case 'M':modify_record(headptr);break;
- 23                         case 't':
- 24                         case 'T':sort_list(headptr);break;
- 25                         case 'l':
- 26                         case 'L':delete_all(&headptr);break;
- 27                         case 'r':
- 28                         case 'R':reverse_link(&headptr); break;
- 29                         case 'e':
- 30                         case 'E':
- 31                                  {
- 32                                          char ch;
- 33                                          printf("s/S save and exit \n e/E exit without saving\n");
- 34                                          scanf(" %c",&ch);
- 35                                          switch(ch)
- 36                                          {
- 37                                                  case 's':
- 38                                                  case 'S': save_record(headptr); delete_all(&headptr);printf("records saved and exit\n");
- 39                                                            exit(0);
- 40                                                  case 'e':
- 41                                                  case 'E': delete_all(&headptr);printf("without saving and exit\n");exit(0);
- 42                                                                 default : printf("invalid choice \n");
- 43                                          }
- 44                                  }
- 45                       default :printf("unknown choice\n");
- 46                 }
- 47         }
- 48 }
- 49 void add_record(ST **ptr)
- 50 {
- 51         ST *new;
- 52         ST *temp;
- 53         new=malloc(sizeof(ST));
- 54         int roll=1;
- 55     while (1)
- 56     {
- 57         temp = *ptr;
- 58         while (temp != NULL)
- 59         {
- 60             if (temp->rollno == roll)
- 61                 break;
- 62             temp = temp->next;
- 63         }
- 64         if (temp == NULL)
- 65             break;
- 66         roll++;
- 67     }
- 68 
- 69     new->rollno = roll;
- 70         printf("enter a rollno name and marks\n");
- 71         scanf("%s%f",new->name,&new->percentage);
- 72         new->next=*ptr;
- 73         *ptr=new;
- 74 }
- 75 void delete_record(ST **ptr)
- 76 {
- 77         char ch;
- 78         printf("r/R enter rollno to delete \n n/N enter name to delete \n");
- 79         scanf(" %c",&ch);
- 80         switch(ch)
- 81         {
- 82                 case 'r':
- 83                 case 'R':rollno_to_delete(ptr); break;
- 84                 case 'n':
- 85                 case 'N':name_to_delete(ptr); break;
- 86                 default :printf("unknown choice\n");
- 87         }
- 88 }
- 89 void name_to_delete(ST **ptr)
- 90 {
- 91         if(*ptr==0)
- 92         {
- 93                 printf("no records found\n");
- 94                 return ;
- 95         }
- 96         char name[20];
- 97         printf("enter a name\n");
- 98         scanf("%s",name);
- 99         ST *prev,*del=*ptr;
-100         while(del)
-101         {
-102                 if(strcmp(name,del->name)==0)
-103                 {
-104                         if(del==*ptr)
-105                                 *ptr=del->next;
-106                         else
-107                                 prev->next=del->next;
-108                         free(del);
-109                         return;
-110                 }
-111                 prev=del;
-112                 del=del->next;
-113         }
-114         printf("name not found\n");
-115 }
-116 void rollno_to_delete(ST **ptr)
-117 {
-118         if(*ptr==0)
-119         {
-120                 printf("no records found\n");
-121                 return ;
-122         }
-123         int rollno;
-124         printf("enter a rollno\n");
-125         scanf("%d",&rollno);
-126         ST *prev,*del=*ptr;
-127         while(del)
-128         {
-129                 if(del->rollno==rollno)
-130                 {
-131                         if(del==*ptr)
-132                                 *ptr=del->next;
-133                         else
-134                                 prev->next=del->next;
-135                         free(del);
-136                         return;
-137                 }
-138                 prev=del;
-139                 del=del->next;
-140         }
-141         printf("rollno not found\n");
-142 }
-143 
-144 void show_list(ST *ptr)
-145 {
-146        printf("-----------------------------------\n");
-147        printf("Rollno.  Name  percentage\n");
-148        printf("-----------------------------------\n");
-149         while(ptr)
-150         {
-151                 printf("%d  %s  %f\n",ptr->rollno,ptr->name,ptr->percentage);
-152                 ptr=ptr->next;
-153         }
-154         printf("-----------------------------------\n");
-155 }
-156 void modify_record(ST *ptr)
-157 {
-158         if(ptr==0)
-159         {
-160                 printf("no records found\n");
-161                 return ;
-162         }
-163         char ch;
-164         printf("enter to search by modification\n");
-165         printf("R/r search by rollno \n n/N search by name \n p/P search by percentage\n");
-166         scanf(" %c",&ch);
-167         switch(ch)
-168         {
-169                 case 'r':
-170                 case 'R':search_by_rollno(ptr);break;
-171                 case 'n':
-172                 case 'N':search_by_name(ptr);break;
-173                 case 'p':
-174                 case 'P':search_by_percentage(ptr);break;
-175                 default:printf("invalid choice\n");
-176         }
-177 }
-178 
-179 void search_by_rollno(ST *ptr)
-180 {
-181         int roll;
-182         printf("enter a rollno\n");
-183         scanf("%d",&roll);
-184         int f=0;
-185         while(ptr)
-186         {
-187                 if(roll==ptr->rollno)
-188                 {
-189                         printf("current details \n rollno %d \nname %s\npercentage %f\n",ptr->rollno,ptr->name,ptr->percentage);
-190                         printf("enter a name and percentage \n");
-191                         scanf("%s %f",ptr->name,&ptr->percentage);
-192                         f=1;
-193                         printf("record is modified\n");
-194                 }
-195                 ptr=ptr->next;
-196         }
-197         if(f==0)
-198                 printf("rollno not found\n");
-199 }
-200 void search_by_name(ST *ptr)
-201 {
-202         char name[20];
-203         int f = 0;
-204         int roll;
-205         ST *p = ptr;
-206 
-207         printf("enter a name\n");
-208         scanf("%s", name);
-209 
-210         while(p)
-211         {
-212                 if(strcmp(name, p->name) == 0)
-213                         f++;
-214 
-215                 p = p->next;
-216         }
-217 
-218         if(f == 0)
-219         {
-220                 printf("name not found\n");
-221                 return;
-222         }
-223 
-224         if(f > 1)
-225         {
-226                 p = ptr;
-227 
-228                 printf("matching records:\n");
-229 
-230                 while(p)
-231                 {
-232                         if(strcmp(name, p->name) == 0)
-233                         {
-234                                 printf("rollno %d name %s percentage %f\n",
-235                                                 p->rollno, p->name, p->percentage);
-236                         }
-237 
-238                         p = p->next;
-239                 }
-240  
-241                 printf("enter rollno of record to modify\n");
-242                 scanf("%d", &roll);
-243 
-244                 p = ptr;
-245 
-246                 while(p)
-247                 {
-248                         if(p->rollno == roll && strcmp(name, p->name) == 0)
-249                         {
-250                                 printf("current details\n");
-251                                 printf("rollno %d\nname %s\npercentage %f\n",
-252                                                 p->rollno, p->name, p->percentage);
-253 
-254                                 printf("enter a name and percentage\n");
-255                                 scanf("%s %f", p->name, &p->percentage);
-256 
-257                                 printf("record is modified\n");
-258                                 return;
-259                         }
-260 
-261                         p = p->next;
-262                 }
-263 
-264                 printf("rollno not found\n");
-265         }
-266         else
-267         {
-268                 p = ptr;
-269 
-270                 while(p)
-271                 {
-272                         if(strcmp(name, p->name) == 0)
-273                         {
-274                                 printf("current details\n");
-275                                 printf("rollno %d\nname %s\npercentage %f\n",
-276                                                 p->rollno, p->name, p->percentage);
-277 
-278                                 printf("enter a name and percentage\n");
-279                                 scanf("%s %f", p->name, &p->percentage);
-280 
-281                                 printf("record is modified\n");
-282                                 return;
-283                         }
-284 
-285                         p = p->next;
-286                 }
-287         }
-288 }
-289 
-290 void search_by_percentage(ST *ptr)
-291 {
-292     float percentage;
-293     int f = 0;
-294     int roll;
-295     ST *p = ptr;
-296 
-297     printf("enter a percentage\n");
-298     scanf("%f", &percentage);
-299     while(p)
-300     {
-301         if(percentage == p->percentage)
-302             f++;
-303 
-304         p = p->next;
-305     }
-306 
-307     if(f == 0)
-308     {
-309         printf("percentage not found\n");
-310         return;
-311     }
-312     if(f > 1)
-313     {
-314         p = ptr;
-315 
-316         printf("matching records:\n");
-317 
-318         while(p)
-319         {
-320             if(percentage == p->percentage)
-321             {
-322                 printf("rollno %d name %s percentage %f\n",
-323                        p->rollno, p->name, p->percentage);
-324             }
-325 
-326             p = p->next;
-327         }
-328 
-329         printf("enter rollno of record to modify\n");
-330         scanf("%d", &roll);
-331 
-332         p = ptr;
-333 
-334         while(p)
-335         {
-336             if(p->rollno == roll && percentage == p->percentage)
-337             {
-338                 printf("current details\n");
-339                 printf("rollno %d\nname %s\npercentage %f\n",
-340                        p->rollno, p->name, p->percentage);
-341 
-342                 printf("enter a name and percentage\n");
-343                 scanf("%s %f", p->name, &p->percentage);
-344 
-345                 printf("record is modified\n");
-346                 return;
-347             }
-348 
-349             p = p->next;
-350         }
-351 
-352         printf("rollno not found\n");
-353     }
-354     else
-355     {
-356         p = ptr;
-357         while(p)
-358         {
-359             if(percentage == p->percentage)
-360             {
-361                 printf("current details\n");
-362                 printf("rollno %d\nname %s\npercentage %f\n",
-363                        p->rollno, p->name, p->percentage);
-364                 printf("enter a name and percentage\n");
-365                 scanf("%s %f", p->name, &p->percentage);
-366 
-367                 printf("record is modified\n");
-368                 return;
-369             }
-370 
-371             p = p->next;
-372         }
-373     }
-374 }
-375 
-376 
-377 void sort_list(ST *ptr)
-378 {
-379         char ch;
-380         printf("n/N sort with name \n R/r sort with percentage \n ");
-381         scanf(" %c",&ch);
-382         switch(ch)
-383         {
-384                 case 'n':
-385                 case 'N':sort_with_name(ptr);break;
-386                 case 'r':
-387                 case 'R':sort_with_percentage(ptr); break;
-388                 default :printf("unknown choice\n");
-389         }
-390 }
-391 void sort_with_name(ST *ptr)
-392 {
-393         if(ptr==0)
-394         {
-395                 printf("no records found\n");
-396                 return ;
-397         }
-398         int c=count(ptr);
-399         int i,j;
-400         ST t,*p2,*p1=ptr;
-401         for(i=0;i<c-1;i++)
-402         {
-403                 p2=p1->next;
-404                 for(j=0;j<c-1-i;j++)
-405                 {
-406                         if(strcmp(p1->name,p2->name)>0)
-407                         {
-408                                 t.rollno=p1->rollno;
-409                                 strcpy(t.name,p1->name);
-410                                 t.percentage=p1->percentage;
-411                                 p1->rollno=p2->rollno;
-412                                 strcpy(p1->name,p2->name);
-413                                 p1->percentage=p2->percentage;
-414                                 p2->rollno=t.rollno;
-415                                 strcpy(p2->name,t.name);
-416                                 p2->percentage=t.percentage;
-417                         }
-418                         p2=p2->next;
-419                 }
-420                 p1=p1->next;
-421         }
-422 }
-423 void sort_with_percentage(ST *ptr)
-424 {
-425         if(ptr==0)
-426         {
-427                 printf("no records found\n");
-428                 return ;
-429         }
-430         int c=count(ptr);
-431         int i,j;
-432         ST t,*p2,*p1=ptr;
-433         for(i=0;i<c-1;i++)
-434         {
-435                 p2=p1->next;
-436                 for(j=0;j<c-1-i;j++)
-437                 {
-438                         if(p1->percentage>p2->percentage)
-439                         {
-440                                 t.rollno=p1->rollno;
-441                                 strcpy(t.name,p1->name);
-442                                 t.percentage=p1->percentage;
-443                                 p1->rollno=p2->rollno;
-444                                 strcpy(p1->name,p2->name);
-445                                 p1->percentage=p2->percentage;
-446                                 p2->rollno=t.rollno;
-447                                 strcpy(p2->name,t.name);
-448                                 p2->percentage=t.percentage;
-449                         }
-450                         p2=p2->next;
-451                 }
-452                 p1=p1->next;
-453         }
-454 }
-455 void delete_all(ST **ptr)
-456 {
-457         if(*ptr==0)
-458         {
-459                 printf("no records found");
-460                 return ;
-461         }
-462         ST *del=*ptr;
-463         while(del)
-464         {
-465                 *ptr =del->next;
-466                 free(del);
-467                 del=*ptr;
-468         }
-469 }
-470 void reverse_link(ST **ptr)
-471 {
-472         if(*ptr==0)
-473         {
-474                 printf("no records found\n");
-475                 return;
-476         }
-477         int i,c=count(*ptr);
-478         ST **p,*t=*ptr;
-479         if(c>1)
-480         {
-481                 p=malloc(sizeof(ST *)*c);
-482                 for(i=0;i<c;i++)
-483                 {
-484                         p[i]=t;
-485                         t=t->next;
-486                 }
-487                 for(i=c-1;i>0;i--)
-488                 {
-489                         p[i]->next=p[i-1];
-490                 }
-491                 p[0]->next=0;
-492                 *ptr=p[c-1];
-493         }
-494 }
-495 int count(ST *ptr)
-496 {
-497         int c=0;
-498         while(ptr)
-499         {
-500                 c++;
-501                 ptr=ptr->next;
-502         }
-503         return c;
-504 }
-505 void save_record(ST *ptr)
-506 {
-507         if(ptr==0)
-508         {
-509                 printf("no records found\n");
-510                 return ;
-511         }
-512         FILE *fp=fopen("student.data","w");
-513         while(ptr)
-514         {
-515                 fprintf(fp,"%d  %s  %f\n",ptr->rollno,ptr->name,ptr->percentage);
-516                 ptr=ptr->next;
-517         }
-518         printf("data saved in file\n");
-519         fclose(fp);
-520 }
+  #include"header.h"
+  int main()
+  {
+          ST *headptr=0;
+          char  op;
+          while(1)
+          {
+                  printf("enter your choice\n");
+                  printf("a/A add new \n d/D delete a record \n s/S show the list \n m/M  modify a record \n v/V save record \n t/T sort the list \n l/L delete all \n r/R reverse the list \n e/E exit \n");
+                  scanf(" %c",&op);
+                  switch(op)
+                  {
+                         case 'a':
+                          case 'A':add_record(&headptr); break;
+                         case 'd':
+                          case 'D':delete_record(&headptr); break;
+                          case 's':
+                          case 'S':show_list(headptr);break;
+                          case 'V':
+                          case 'v':save_record(headptr);break;
+                          case 'm':
+                          case 'M':modify_record(headptr);break;
+                          case 't':
+                          case 'T':sort_list(headptr);break;
+                          case 'l':
+                          case 'L':delete_all(&headptr);break;
+                          case 'r':
+                          case 'R':reverse_link(&headptr); break;
+                          case 'e':
+                          case 'E':
+                                 {
+                                           char ch;
+                                           printf("s/S save and exit \n e/E exit without saving\n");
+                                           scanf(" %c",&ch);
+                                           switch(ch)
+                                          {
+                                                   case 's':
+                                                   case 'S': save_record(headptr); delete_all(&headptr);printf("records saved and exit\n");
+                                                             exit(0);
+                                                   case 'e':
+                                                  case 'E': delete_all(&headptr);printf("without saving and exit\n");exit(0);
+                                                                  default : printf("invalid choice \n");
+                                          }
+                                   }
+                        default :printf("unknown choice\n");
+                 }
+          }
+  }
+  void add_record(ST **ptr)
+ {
+          ST *new;
+         ST *temp;
+         new=malloc(sizeof(ST));
+         int roll=1;
+      while (1)
+      {
+         temp = *ptr;
+          while (temp != NULL)
+          {
+              if (temp->rollno == roll)
+                 break;
+             temp = temp->next;
+          }
+          if (temp == NULL)
+              break;
+          roll++;
+      }
+ 
+      new->rollno = roll;
+          printf("enter a rollno name and marks\n");
+          scanf("%s%f",new->name,&new->percentage);
+         new->next=*ptr;
+          *ptr=new;
+  }
+  void delete_record(ST **ptr)
+  {
+          char ch;
+          printf("r/R enter rollno to delete \n n/N enter name to delete \n");
+         scanf(" %c",&ch);
+          switch(ch)
+          {
+                  case 'r':
+                  case 'R':rollno_to_delete(ptr); break;
+                case 'n':
+                  case 'N':name_to_delete(ptr); break;
+                 default :printf("unknown choice\n");
+          }
+  }
+  void name_to_delete(ST **ptr)
+ {
+       if(*ptr==0)
+        {
+                 printf("no records found\n");
+                 return ;
+         }
+         char name[20];
+         printf("enter a name\n");
+         scanf("%s",name);
+        ST *prev,*del=*ptr;
+         while(del)
+         {
+                 if(strcmp(name,del->name)==0)
+                 {
+                         if(del==*ptr)
+                                 *ptr=del->next;
+                         else
+                                 prev->next=del->next;
+                         free(del);
+                         return;
+                 }
+                 prev=del;
+                 del=del->next;
+         }
+         printf("name not found\n");
+ }
+ void rollno_to_delete(ST **ptr)
+ {
+         if(*ptr==0)
+         {
+                 printf("no records found\n");
+                 return ;
+         }
+        int rollno;
+         printf("enter a rollno\n");
+         scanf("%d",&rollno);
+         ST *prev,*del=*ptr;
+        while(del)
+         {
+                if(del->rollno==rollno)
+                 {
+                     if(del==*ptr)
+                                 *ptr=del->next;
+                         else
+                                 prev->next=del->next;
+                        free(del);
+                         return;
+                 }
+                 prev=del;
+                 del=del->next;
+         }
+         printf("rollno not found\n");
+ }
+ 
+ void show_list(ST *ptr)
+ {
+        printf("-----------------------------------\n");
+        printf("Rollno.  Name  percentage\n");
+        printf("-----------------------------------\n");
+         while(ptr)
+         {
+                printf("%d  %s  %f\n",ptr->rollno,ptr->name,ptr->percentage);
+                 ptr=ptr->next;
+         }
+         printf("-----------------------------------\n");
+ }
+ void modify_record(ST *ptr)
+ {
+         if(ptr==0)
+        {
+                 printf("no records found\n");
+                 return ;
+         }
+         char ch;
+         printf("enter to search by modification\n");
+         printf("R/r search by rollno \n n/N search by name \n p/P search by percentage\n");
+         scanf(" %c",&ch);
+        switch(ch)
+         {
+                 case 'r':
+                 case 'R':search_by_rollno(ptr);break;
+                 case 'n':
+                 case 'N':search_by_name(ptr);break;
+                case 'p':
+                 case 'P':search_by_percentage(ptr);break;
+                default:printf("invalid choice\n");
+         }
+ }
+ 
+ void search_by_rollno(ST *ptr)
+ {
+         int roll;
+         printf("enter a rollno\n");
+         scanf("%d",&roll);
+         int f=0;
+         while(ptr)
+         {
+                if(roll==ptr->rollno)
+                 {
+                         printf("current details \n rollno %d \nname %s\npercentage %f\n",ptr->rollno,ptr->name,ptr->percentage);
+                        printf("enter a name and percentage \n");
+                         scanf("%s %f",ptr->name,&ptr->percentage);
+                         f=1;
+                         printf("record is modified\n");
+                 }
+                ptr=ptr->next;
+         }
+         if(f==0)
+                 printf("rollno not found\n");
+ }
+ void search_by_name(ST *ptr)
+ {
+         char name[20];
+         int f = 0;
+         int roll;
+        ST *p = ptr;
+ 
+         printf("enter a name\n");
+         scanf("%s", name);
+ 
+         while(p)
+         {
+                if(strcmp(name, p->name) == 0)
+                         f++;
+
+                 p = p->next;
+         }
+ 
+        if(f == 0)
+         {
+                 printf("name not found\n");
+                 return;
+        }
+
+         if(f > 1)
+         {
+                p = ptr;
+ 
+                 printf("matching records:\n");
+
+                 while(p)
+                 {
+                         if(strcmp(name, p->name) == 0)
+                         {
+                                 printf("rollno %d name %s percentage %f\n",
+                                                 p->rollno, p->name, p->percentage);
+                        }
+ 
+                         p = p->next;
+                 }
+  
+                 printf("enter rollno of record to modify\n");
+                 scanf("%d", &roll);
+ 
+                p = ptr;
+ 
+                 while(p)
+                 {
+                         if(p->rollno == roll && strcmp(name, p->name) == 0)
+                         {
+                                 printf("current details\n");
+                                 printf("rollno %d\nname %s\npercentage %f\n",
+                                                p->rollno, p->name, p->percentage);
+
+                                 printf("enter a name and percentage\n");
+                                 scanf("%s %f", p->name, &p->percentage);
+                                printf("record is modified\n");
+                                return;
+                         }
+ 
+                         p = p->next;
+                }
+ 
+                 printf("rollno not found\n");
+         }
+         else
+        {
+                 p = ptr;
+ 
+                 while(p)
+                 {
+                         if(strcmp(name, p->name) == 0)
+                         {
+                                 printf("current details\n");
+                                printf("rollno %d\nname %s\npercentage %f\n",
+                                                p->rollno, p->name, p->percentage);
+
+                                 printf("enter a name and percentage\n");
+                                scanf("%s %f", p->name, &p->percentage);
+
+                                printf("record is modified\n");
+                                 return;
+                        }
+ 
+                         p = p->next;
+                 }
+         }
+ }
+ 
+ void search_by_percentage(ST *ptr)
+ {
+     float percentage;
+     int f = 0;
+     int roll;
+     ST *p = ptr;
+ 
+    printf("enter a percentage\n");
+     scanf("%f", &percentage);
+     while(p)
+     {
+         if(percentage == p->percentage)
+             f++;
+ 
+        p = p->next;
+     }
+ 
+     if(f == 0)
+     {
+         printf("percentage not found\n");
+         return;
+     }
+     if(f > 1)
+     {
+        p = ptr;
+ 
+         printf("matching records:\n");
+ 
+         while(p)
+         {
+            if(percentage == p->percentage)
+             {
+                 printf("rollno %d name %s percentage %f\n",
+                        p->rollno, p->name, p->percentage);
+             }
+ 
+             p = p->next;
+         }
+ 
+         printf("enter rollno of record to modify\n");
+         scanf("%d", &roll);
+ 
+         p = ptr;
+ 
+        while(p)
+         {
+            if(p->rollno == roll && percentage == p->percentage)
+             {
+           printf("current details\n");
+                printf("rollno %d\nname %s\npercentage %f\n",
+                        p->rollno, p->name, p->percentage);
+
+                 printf("enter a name and percentage\n");
+                 scanf("%s %f", p->name, &p->percentage);
+
+                 printf("record is modified\n");
+                 return;
+             }
+ 
+             p = p->next;
+         }
+ 
+         printf("rollno not found\n");
+     }
+     else
+     {
+         p = ptr;
+         while(p)
+         {
+             if(percentage == p->percentage)
+             {
+                 printf("current details\n");
+                 printf("rollno %d\nname %s\npercentage %f\n",
+                        p->rollno, p->name, p->percentage);
+                 printf("enter a name and percentage\n");
+                 scanf("%s %f", p->name, &p->percentage);
+ 
+                 printf("record is modified\n");
+                 return;
+             }
+ 
+             p = p->next;
+         }
+     }
+ }
+ 
+ 
+ void sort_list(ST *ptr)
+{
+        char ch;
+         printf("n/N sort with name \n R/r sort with percentage \n ");
+        scanf(" %c",&ch);
+        switch(ch)
+        {
+                case 'n':
+                case 'N':sort_with_name(ptr);break;
+                 case 'r':
+                 case 'R':sort_with_percentage(ptr); break;
+                 default :printf("unknown choice\n");
+         }
+ }
+ void sort_with_name(ST *ptr)
+ {
+         if(ptr==0)
+         {
+                 printf("no records found\n");
+                return ;
+         }
+        int c=count(ptr);
+         int i,j;
+         ST t,*p2,*p1=ptr;
+         for(i=0;i<c-1;i++)
+         {
+                p2=p1->next;
+                 for(j=0;j<c-1-i;j++)
+                 {
+                        if(strcmp(p1->name,p2->name)>0)
+                         {
+                                 t.rollno=p1->rollno;
+                                strcpy(t.name,p1->name);
+                                 t.percentage=p1->percentage;
+                                 p1->rollno=p2->rollno;
+                                 strcpy(p1->name,p2->name);
+                                 p1->percentage=p2->percentage;
+                                 p2->rollno=t.rollno;
+                                strcpy(p2->name,t.name);
+                                 p2->percentage=t.percentage;
+                         }
+                         p2=p2->next;
+                 }
+                 p1=p1->next;
+         }
+ }
+ void sort_with_percentage(ST *ptr)
+ {
+        if(ptr==0)
+        {
+                 printf("no records found\n");
+                 return ;
+         }
+        int c=count(ptr);
+         int i,j;
+        ST t,*p2,*p1=ptr;
+        for(i=0;i<c-1;i++)
+         {
+                 p2=p1->next;
+                 for(j=0;j<c-1-i;j++)
+                 {
+                         if(p1->percentage>p2->percentage)
+                         {
+                                 t.rollno=p1->rollno;
+                                 strcpy(t.name,p1->name);
+                                 t.percentage=p1->percentage;
+                                 p1->rollno=p2->rollno;
+                                strcpy(p1->name,p2->name);
+                                 p1->percentage=p2->percentage;
+                                 p2->rollno=t.rollno;
+                                strcpy(p2->name,t.name);
+                                 p2->percentage=t.percentage;
+                         }
+                         p2=p2->next;
+                 }
+                 p1=p1->next;
+         }
+ }
+ void delete_all(ST **ptr)
+ {
+         if(*ptr==0)
+         {
+                 printf("no records found");
+                return ;
+        }
+         ST *del=*ptr;
+         while(del)
+         {
+                 *ptr =del->next;
+                free(del);
+                 del=*ptr;
+         }
+ }
+ void reverse_link(ST **ptr)
+ {
+        if(*ptr==0)
+        {
+                 printf("no records found\n");
+                 return;
+         }
+        int i,c=count(*ptr);
+         ST **p,*t=*ptr;
+         if(c>1)
+         {
+                 p=malloc(sizeof(ST *)*c);
+                for(i=0;i<c;i++)
+                 {
+                        p[i]=t;
+                         t=t->next;
+                 }
+                 for(i=c-1;i>0;i--)
+                 {
+                         p[i]->next=p[i-1];
+                 }
+                 p[0]->next=0;
+                 *ptr=p[c-1];
+         }
+ }
+ int count(ST *ptr)
+ {
+         int c=0;
+         while(ptr)
+         {
+                 c++;
+                 ptr=ptr->next;
+         }
+         return c;
+    }
+ void save_record(ST *ptr)
+ {
+         if(ptr==0)
+         {
+                 printf("no records found\n");
+                 return ;
+        }
+         FILE *fp=fopen("student.data","w");
+         while(ptr)
+         {
+                 fprintf(fp,"%d  %s  %f\n",ptr->rollno,ptr->name,ptr->percentage);
+                 ptr=ptr->next;
+         }
+         printf("data saved in file\n");
+         fclose(fp);
+ }
 
